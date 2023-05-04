@@ -10,33 +10,37 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
+import { Product } from './schemas/product.schema';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
   @Get()
-  getAll() {
-    return this.productService.getAll();
+  get(): Promise<Product[]> {
+    return this.productService.get();
   }
 
   @Get(':id')
-  show(@Param('id') id: number): string {
+  show(@Param('id') id: string): Promise<Product> {
     return this.productService.find(id);
   }
 
   @Post()
-  store(@Body() product: CreateProductDto): string {
-    return this.productService.create(product);
+  store(@Body() product: CreateProductDto): Promise<Product> {
+    return this.productService.store(product);
   }
 
   @Put(':id')
-  update(@Body() product: UpdateProductDto, @Param('id') id: number): string {
-    return `Update ${id}: ${product.title} - $${product.price}`;
+  update(
+    @Body() product: UpdateProductDto,
+    @Param('id') id: string,
+  ): Promise<Product> {
+    return this.productService.update(id, product);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number) {
-    return `Delete: ${id}`;
+  destroy(@Param('id') id: string): Promise<Product> {
+    return this.productService.destroy(id);
   }
 }
